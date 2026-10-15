@@ -33,12 +33,12 @@ export function Lombada({ loja, situacao, urlSite, categorias, ativo, aoEscolher
         {textos.voltarSite}
       </a>
 
-      <h1 className="mt-8 animate-surgir">
+      <h1 className="mt-8 animate-entrar">
         <Marca className="block text-[clamp(88px,30vw,176px)] leading-[0.82] tracking-[-0.01em] text-cream lg:text-8xl" />
         <span className="rotulo mt-4 block text-gold">{textos.chamada}</span>
       </h1>
 
-      <div className="mt-8 animate-surgir [animation-delay:80ms] lg:order-last lg:mt-auto lg:pt-10">
+      <div className="mt-8 animate-entrar [animation-delay:60ms] lg:order-last lg:mt-auto lg:pt-10">
         <Foto
           foto={fotos.ambiente}
           sizes="(min-width: 64rem) 16rem, (min-width: 45rem) 680px, calc(100vw - 2.5rem)"
@@ -47,7 +47,7 @@ export function Lombada({ loja, situacao, urlSite, categorias, ativo, aoEscolher
         />
       </div>
 
-      <div className="mt-8 border-t border-cream/15 pt-5 animate-surgir [animation-delay:120ms]">
+      <div className="mt-8 border-t border-cream/15 pt-5 animate-entrar [animation-delay:100ms]">
         <p className="flex items-center gap-2.5 text-[15px] font-medium">
           <span aria-hidden className="relative flex size-2.5 shrink-0">
             {aberto && <span className="absolute inset-0 animate-ping rounded-full bg-gold/60" />}

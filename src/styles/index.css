@@ -21,6 +21,8 @@
   --color-surface: #1e1610;
   --color-cream: #f2ece1;
   --color-gold: #c9973f;
+  /* Erros de formulário: terracota, AA sobre ink e surface */
+  --color-alerta: #e8836b;
 
   --font-display: 'Anton', 'Impact', sans-serif;
   --font-text: 'Archivo', system-ui, sans-serif;
@@ -166,6 +168,13 @@
   }
 }
 
+/* Entrada da página: só um deslocamento leve, visível desde o primeiro quadro. */
+@keyframes entrar {
+  from {
+    transform: translateY(8px);
+  }
+}
+
 @keyframes surgir {
   from {
     transform: translateY(12px);
@@ -178,4 +187,5 @@
   --animate-carimbo: carimbo 420ms var(--ease-cine);
   --animate-empurrao: empurrao 460ms var(--ease-cine);
   --animate-surgir: surgir 700ms var(--ease-cine) both;
+  --animate-entrar: entrar 480ms var(--ease-cine) both;
 }

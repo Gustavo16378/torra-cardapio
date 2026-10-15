@@ -6,6 +6,7 @@ import { loja, modoDemo, urlSite } from './dados/loja'
 import { useCardapio } from './hooks/useCardapio'
 import { useCarrinho } from './hooks/useCarrinho'
 import { useDadosCliente } from './hooks/useDadosCliente'
+import { useEnvioPendente } from './hooks/useEnvioPendente'
 import { useSituacaoLoja } from './hooks/useSituacaoLoja'
 import { BarraCarrinho } from './ui/BarraCarrinho'
 import { ComandaLateral } from './ui/ComandaLateral'
@@ -13,7 +14,7 @@ import { situacaoExibida } from './ui/demo'
 import { FaixaDemo } from './ui/FaixaDemo'
 import { FolhaItem } from './ui/FolhaItem'
 import { ALTURA_NAV, idSecao, NavCategorias } from './ui/NavCategorias'
-import { PainelPedido } from './ui/PainelPedido'
+import { PainelPedido, type EtapaInicial } from './ui/PainelPedido'
 import { Rodape } from './ui/Rodape'
 import { SecaoCategoria } from './ui/SecaoCategoria'
 import { textos } from './ui/textos'
@@ -29,9 +30,11 @@ export default function App() {
   const situacao = situacaoExibida(useSituacaoLoja(loja), modoDemo)
   const carrinho = useCarrinho(categorias, 'torra:carrinho:v1')
   const cliente = useDadosCliente('torra:cliente:v1')
+  const envio = useEnvioPendente('torra:envio:v1')
 
   const [itemAberto, setItemAberto] = useState<Item | null>(null)
-  const [pedido, setPedido] = useState<'carrinho' | 'checkout' | null>(null)
+  // Voltando do WhatsApp com um envio pendente, a folha já abre perguntando se o pedido foi enviado.
+  const [pedido, setPedido] = useState<EtapaInicial | null>(() => (envio.pendente ? 'enviado' : null))
   const [aviso, setAviso] = useState('')
 
   const idsSecoes = useMemo(() => (categorias ?? []).map(idSecao), [categorias])
@@ -109,6 +112,7 @@ export default function App() {
         aoFechar={fecharPedido}
         carrinho={carrinho}
         cliente={cliente}
+        envio={envio}
         loja={loja}
         situacao={situacao}
       />

@@ -1,4 +1,4 @@
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, CircleAlert } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { calcularTotais, formatarBRL, paraCentavos } from '../core/precos'
 import type { FormaPagamento, ItemCarrinho, Loja, ModoPedido } from '../core/tipos'
@@ -14,26 +14,54 @@ export type FormularioCheckout = {
   obs: string
 }
 
+/** ids dos campos, na ordem em que aparecem (o envio leva o foco ao primeiro inválido). */
+export const ID_CAMPO = {
+  nome: 'checkout-nome',
+  endereco: 'checkout-endereco',
+  minimo: 'checkout-minimo',
+  trocoPara: 'checkout-troco',
+} as const
+
 type Props = {
   form: FormularioCheckout
   aoMudar: <K extends keyof FormularioCheckout>(campo: K, valor: FormularioCheckout[K]) => void
   linhas: ItemCarrinho[]
   loja: Loja
   erros: ErrosCheckout
+  /** Depois da primeira tentativa de envio, os campos inválidos ficam destacados. */
+  mostrarErros: boolean
   temDadosSalvos: boolean
   aoEsquecerDados: () => void
   aoVoltar: () => void
 }
 
-const campo =
-  'mt-2 w-full border-b border-cream/25 bg-transparent py-2 text-base placeholder:text-cream/45 transition-[border-color] duration-200 focus:border-gold focus:outline-none'
+/** Caixa do campo: superfície mais escura que a folha, borda visível, altura de toque confortável. */
+function caixa(invalido: boolean): string {
+  return `border bg-ink/70 transition-[border-color,box-shadow] duration-200 ${
+    invalido
+      ? 'border-alerta shadow-[0_0_0_1px_var(--color-alerta)]'
+      : 'border-cream/30 hover:border-cream/50 focus-within:border-gold focus-within:shadow-[0_0_0_1px_var(--color-gold)]'
+  }`
+}
+
+const entrada =
+  'block w-full bg-transparent px-4 text-base text-cream placeholder:text-cream/50 focus:outline-none focus-visible:outline-none'
 
 function Rotulo({ htmlFor, children, obrigatorio }: { htmlFor: string; children: ReactNode; obrigatorio?: boolean }) {
   return (
-    <label htmlFor={htmlFor} className="rotulo block">
+    <label htmlFor={htmlFor} className="rotulo mb-2 block">
       {children}
       {obrigatorio && <span className="ml-2 text-[10px] text-gold">{textos.obrigatorio}</span>}
     </label>
+  )
+}
+
+function Erro({ id, children }: { id: string; children: ReactNode }) {
+  return (
+    <p id={id} className="mt-2 flex items-start gap-1.5 text-[15px] leading-snug text-alerta">
+      <CircleAlert aria-hidden size={16} strokeWidth={2.25} className="mt-0.5 shrink-0" />
+      {children}
+    </p>
   )
 }
 
@@ -75,11 +103,25 @@ function Escolha({
   )
 }
 
-export function Checkout({ form, aoMudar, linhas, loja, erros, temDadosSalvos, aoEsquecerDados, aoVoltar }: Props) {
+export function Checkout({
+  form,
+  aoMudar,
+  linhas,
+  loja,
+  erros,
+  mostrarErros,
+  temDadosSalvos,
+  aoEsquecerDados,
+  aoVoltar,
+}: Props) {
   const entrega = form.modo === 'entrega'
   const totais = calcularTotais(linhas, form.modo, loja)
   const taxa = formatarBRL(paraCentavos(loja.entrega.taxa))
   const minimo = formatarBRL(paraCentavos(loja.entrega.pedidoMinimo))
+
+  const nomeInvalido = mostrarErros && Boolean(erros.nome)
+  const enderecoInvalido = mostrarErros && Boolean(erros.endereco)
+  const trocoInvalido = Boolean(erros.trocoPara)
 
   return (
     <div className="px-5 pt-6 pb-8 md:px-8 md:pt-8">
@@ -100,20 +142,26 @@ export function Checkout({ form, aoMudar, linhas, loja, erros, temDadosSalvos, a
       </h2>
 
       <div className="mt-8 space-y-8">
-        <div>
-          <Rotulo htmlFor="checkout-nome" obrigatorio>
+        <div className="scroll-mt-8">
+          <Rotulo htmlFor={ID_CAMPO.nome} obrigatorio>
             {textos.nome}
           </Rotulo>
-          <input
-            id="checkout-nome"
-            type="text"
-            autoComplete="name"
-            enterKeyHint="next"
-            aria-required="true"
-            value={form.nome}
-            onChange={(e) => aoMudar('nome', e.target.value)}
-            className={campo}
-          />
+          <div className={caixa(nomeInvalido)}>
+            <input
+              id={ID_CAMPO.nome}
+              type="text"
+              autoComplete="name"
+              enterKeyHint="next"
+              aria-required="true"
+              aria-invalid={nomeInvalido ? 'true' : undefined}
+              aria-describedby={nomeInvalido ? 'erro-nome' : undefined}
+              value={form.nome}
+              onChange={(e) => aoMudar('nome', e.target.value)}
+              placeholder={textos.nomeDica}
+              className={`${entrada} h-13`}
+            />
+          </div>
+          {nomeInvalido && <Erro id="erro-nome">{textos.erroNome}</Erro>}
         </div>
 
         <fieldset>
@@ -140,26 +188,36 @@ export function Checkout({ form, aoMudar, linhas, loja, erros, temDadosSalvos, a
 
         {entrega && (
           <div className="animate-surgir">
-            <Rotulo htmlFor="checkout-endereco" obrigatorio>
+            <Rotulo htmlFor={ID_CAMPO.endereco} obrigatorio>
               {textos.endereco}
             </Rotulo>
-            <textarea
-              id="checkout-endereco"
-              rows={2}
-              autoComplete="street-address"
-              aria-required="true"
-              value={form.endereco}
-              onChange={(e) => aoMudar('endereco', e.target.value)}
-              placeholder={textos.enderecoDica}
-              className={`${campo} resize-none`}
-            />
+            <div className={caixa(enderecoInvalido)}>
+              <textarea
+                id={ID_CAMPO.endereco}
+                rows={2}
+                autoComplete="street-address"
+                aria-required="true"
+                aria-invalid={enderecoInvalido ? 'true' : undefined}
+                aria-describedby={enderecoInvalido ? 'erro-endereco' : undefined}
+                value={form.endereco}
+                onChange={(e) => aoMudar('endereco', e.target.value)}
+                placeholder={textos.enderecoDica}
+                className={`${entrada} min-h-24 resize-none py-3`}
+              />
+            </div>
+            {enderecoInvalido && <Erro id="erro-endereco">{textos.erroEndereco}</Erro>}
             {erros.minimo && (
-              <p className="mt-3 text-sm text-gold" role="status">
+              <p
+                id={ID_CAMPO.minimo}
+                tabIndex={-1}
+                role="status"
+                className={`mt-3 text-[15px] outline-none ${mostrarErros ? 'text-alerta' : 'text-gold'}`}
+              >
                 {textoFaltaMinimo(erros.minimo.faltam)}{' '}
                 <button
                   type="button"
                   onClick={() => aoMudar('modo', 'retirada')}
-                  className="text-cream/80 underline underline-offset-4 transition-colors duration-200 hover:text-cream"
+                  className="text-cream/85 underline underline-offset-4 transition-colors duration-200 hover:text-cream"
                 >
                   {textos.ouRetirada}
                 </button>
@@ -189,43 +247,41 @@ export function Checkout({ form, aoMudar, linhas, loja, erros, temDadosSalvos, a
             ))}
           </div>
           {form.pagamento === 'dinheiro' && (
-            <div className="mt-4 animate-surgir">
-              <Rotulo htmlFor="checkout-troco">{textos.trocoPara}</Rotulo>
-              <div className="flex items-baseline gap-2">
-                <span aria-hidden className="text-cream/70">
+            <div className="mt-5 animate-surgir">
+              <Rotulo htmlFor={ID_CAMPO.trocoPara}>{textos.trocoPara}</Rotulo>
+              <div className={`flex items-center ${caixa(trocoInvalido)}`}>
+                <span aria-hidden className="pl-4 text-base text-cream/70">
                   R$
                 </span>
                 <input
-                  id="checkout-troco"
+                  id={ID_CAMPO.trocoPara}
                   type="text"
                   inputMode="decimal"
                   value={form.trocoTexto}
                   onChange={(e) => aoMudar('trocoTexto', e.target.value)}
                   placeholder={textos.trocoDica}
-                  aria-invalid={erros.trocoPara ? 'true' : undefined}
-                  aria-describedby={erros.trocoPara ? 'troco-erro' : undefined}
-                  className={campo}
+                  aria-invalid={trocoInvalido ? 'true' : undefined}
+                  aria-describedby={trocoInvalido ? 'erro-troco' : undefined}
+                  className={`${entrada} h-13 pl-2`}
                 />
               </div>
-              {erros.trocoPara && (
-                <p id="troco-erro" className="mt-2 text-sm text-gold">
-                  {textos.trocoBaixo(formatarBRL(totais.total))}
-                </p>
-              )}
+              {trocoInvalido && <Erro id="erro-troco">{textos.trocoBaixo(formatarBRL(totais.total))}</Erro>}
             </div>
           )}
         </fieldset>
 
         <div>
           <Rotulo htmlFor="checkout-obs">{textos.obsGeral}</Rotulo>
-          <textarea
-            id="checkout-obs"
-            rows={2}
-            value={form.obs}
-            onChange={(e) => aoMudar('obs', e.target.value)}
-            placeholder={textos.obsGeralDica}
-            className={`${campo} resize-none`}
-          />
+          <div className={caixa(false)}>
+            <textarea
+              id="checkout-obs"
+              rows={2}
+              value={form.obs}
+              onChange={(e) => aoMudar('obs', e.target.value)}
+              placeholder={textos.obsGeralDica}
+              className={`${entrada} min-h-24 resize-none py-3`}
+            />
+          </div>
         </div>
 
         <dl className="space-y-2 border-t border-cream/15 pt-5 text-[15px]">

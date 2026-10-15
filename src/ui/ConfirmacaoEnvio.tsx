@@ -14,8 +14,6 @@ export function ConfirmacaoEnvio({ link }: { link: string }) {
       <p className="mt-4 max-w-[42ch] text-[15px] leading-relaxed text-cream/80">{textos.enviadoTexto}</p>
       <a
         href={link}
-        target="_blank"
-        rel="noopener noreferrer"
         className="rotulo mt-6 inline-block py-2 text-gold underline-offset-4 hover:underline"
       >
         {textos.abrirDeNovo}

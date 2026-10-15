@@ -41,6 +41,15 @@
     <!-- Fontes self-hosted (latin), as mesmas do site do TORRA -->
     <link rel="preload" href="/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/archivo-latin-wght.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Foto do salão: primeira dobra no celular -->
+    <link
+      rel="preload"
+      as="image"
+      type="image/avif"
+      imagesrcset="/img/ambiente-interior-480.avif 480w, /img/ambiente-interior-800.avif 800w, /img/ambiente-interior-1200.avif 1200w"
+      imagesizes="(min-width: 64rem) 16rem, (min-width: 45rem) 680px, calc(100vw - 2.5rem)"
+      fetchpriority="high"
+    />
   </head>
   <body>
     <div id="root"></div>
