@@ -1,0 +1,161 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Anton';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/anton-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Archivo';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/archivo-latin-wght.woff2') format('woff2');
+}
+
+@theme {
+  --color-ink: #120d09;
+  --color-surface: #1e1610;
+  --color-cream: #f2ece1;
+  --color-gold: #c9973f;
+
+  --font-display: 'Anton', 'Impact', sans-serif;
+  --font-text: 'Archivo', system-ui, sans-serif;
+
+  --ease-cine: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    background-color: var(--color-ink);
+    color: var(--color-cream);
+    font-family: var(--font-text);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-height: 100dvh;
+    background-color: var(--color-ink);
+  }
+
+  ::selection {
+    background-color: var(--color-gold);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Utilitários do TORRA ─────────────────────────────────────────── */
+
+/* Rótulo editorial: caixa-alta pequena com tracking largo, como no site. */
+@utility rotulo {
+  font-family: var(--font-text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+
+/* Pontilhado que liga o nome ao preço, como na carta impressa. */
+@utility pontilhado {
+  min-width: 1.5rem;
+  height: 3px;
+  margin-bottom: 0.32em;
+  background-image: radial-gradient(circle, color-mix(in srgb, var(--color-gold) 55%, transparent) 1px, transparent 1.3px);
+  background-size: 6px 3px;
+  background-repeat: repeat-x;
+  background-position: left center;
+}
+
+/* Borda de cima picotada da comanda (barra do carrinho). */
+@utility serrilha {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -7px;
+    height: 8px;
+    background:
+      linear-gradient(-45deg, var(--color-cream) 4px, transparent 0) 0 100% / 8px 8px repeat-x,
+      linear-gradient(45deg, var(--color-cream) 4px, transparent 0) 0 100% / 8px 8px repeat-x;
+  }
+}
+
+@utility sem-barra-rolagem {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility numeros-tabulares {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Animações (sempre transform/opacity) ─────────────────────────── */
+
+@keyframes tique {
+  from {
+    transform: translateY(55%);
+    opacity: 0;
+  }
+}
+
+@keyframes carimbo {
+  0% {
+    transform: scale(0.7);
+  }
+  60% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes empurrao {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes surgir {
+  from {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+}
+
+@theme {
+  --animate-tique: tique 420ms var(--ease-cine);
+  --animate-carimbo: carimbo 420ms var(--ease-cine);
+  --animate-empurrao: empurrao 460ms var(--ease-cine);
+  --animate-surgir: surgir 700ms var(--ease-cine) both;
+}

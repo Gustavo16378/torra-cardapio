@@ -1,0 +1,34 @@
+# dependências
+node_modules/
+
+# build
+dist/
+dist-ssr/
+*.tsbuildinfo
+.vite/
+
+# testes
+coverage/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# ambiente
+.env
+.env.*
+!.env.example
+
+# editor e sistema
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Cloudflare / Playwright
+.wrangler/
+.playwright-cli/

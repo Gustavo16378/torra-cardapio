@@ -1,0 +1,127 @@
+<!doctype html>
+<!-- Fonte da public/og-image.jpg (1200×630). Servida pelo Vite em dev; para regerar, ver scripts/gerar-og.js. -->
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      @font-face {
+        font-family: 'Anton';
+        src: url('/fonts/anton-latin.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Archivo';
+        font-weight: 100 900;
+        src: url('/fonts/archivo-latin-wght.woff2') format('woff2');
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+        background: #120d09;
+        color: #f2ece1;
+        font-family: 'Archivo', sans-serif;
+        overflow: hidden;
+      }
+      .moldura {
+        position: absolute;
+        inset: 0;
+        padding: 64px 72px;
+        display: grid;
+        grid-template-columns: 1.15fr 1fr;
+        gap: 72px;
+        background: radial-gradient(ellipse at 18% 30%, rgba(201, 151, 63, 0.1), transparent 60%), #120d09;
+      }
+      .rotulo {
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+      .marca {
+        font-family: 'Anton', sans-serif;
+        font-size: 196px;
+        line-height: 0.82;
+        text-transform: uppercase;
+        margin-top: 44px;
+      }
+      .ouro {
+        color: #c9973f;
+      }
+      .chamada {
+        margin-top: 30px;
+        font-family: 'Anton', sans-serif;
+        font-size: 46px;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+      .pe {
+        position: absolute;
+        left: 72px;
+        bottom: 56px;
+        color: rgba(242, 236, 225, 0.7);
+      }
+      .carta {
+        align-self: center;
+        border-left: 2px solid rgba(201, 151, 63, 0.6);
+        padding-left: 36px;
+      }
+      .linha {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        font-size: 24px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(242, 236, 225, 0.1);
+      }
+      .pontos {
+        flex: 1;
+        height: 4px;
+        margin-bottom: 8px;
+        background-image: radial-gradient(circle, rgba(201, 151, 63, 0.6) 1.4px, transparent 1.8px);
+        background-size: 9px 4px;
+        background-repeat: repeat-x;
+      }
+      .preco {
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+      }
+      .serrilha {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 14px;
+        background:
+          linear-gradient(-45deg, #f2ece1 7px, transparent 0) 0 100% / 14px 14px repeat-x,
+          linear-gradient(45deg, #f2ece1 7px, transparent 0) 0 100% / 14px 14px repeat-x;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="moldura">
+      <div>
+        <p class="rotulo ouro">Torrefação própria · Pinheiros, SP</p>
+        <p class="marca">TORRA<span class="ouro">.</span></p>
+        <p class="chamada">Cardápio<br />peça pelo WhatsApp</p>
+      </div>
+      <div class="carta">
+        <p class="rotulo ouro" style="margin-bottom: 10px">Na barra hoje</p>
+        <div class="linha"><span>Cappuccino</span><span class="pontos"></span><span class="preco">16</span></div>
+        <div class="linha"><span>V60 · Mantiqueira</span><span class="pontos"></span><span class="preco">16</span></div>
+        <div class="linha"><span>Cold brew</span><span class="pontos"></span><span class="preco">16</span></div>
+        <div class="linha"><span>Pão de queijo</span><span class="pontos"></span><span class="preco">12</span></div>
+        <div class="linha"><span>Grãos 250 g</span><span class="pontos"></span><span class="preco">58</span></div>
+      </div>
+    </div>
+    <p class="rotulo pe">Espressos · coados de origem · grãos para levar</p>
+    <div class="serrilha"></div>
+  </body>
+</html>
