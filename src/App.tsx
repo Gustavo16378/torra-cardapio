@@ -2,33 +2,41 @@ import { useCallback, useMemo, useState } from 'react'
 import { encontrarItem, totalItens } from './core/carrinho'
 import type { Escolhas, Item } from './core/tipos'
 import { carregarCardapio } from './dados/carregarCardapio'
-import { loja, urlSite } from './dados/loja'
+import { loja, modoDemo, urlSite } from './dados/loja'
 import { useCardapio } from './hooks/useCardapio'
 import { useCarrinho } from './hooks/useCarrinho'
 import { useDadosCliente } from './hooks/useDadosCliente'
 import { useSituacaoLoja } from './hooks/useSituacaoLoja'
 import { BarraCarrinho } from './ui/BarraCarrinho'
+import { ComandaLateral } from './ui/ComandaLateral'
+import { situacaoExibida } from './ui/demo'
+import { FaixaDemo } from './ui/FaixaDemo'
 import { FolhaItem } from './ui/FolhaItem'
 import { ALTURA_NAV, idSecao, NavCategorias } from './ui/NavCategorias'
 import { PainelPedido } from './ui/PainelPedido'
 import { Rodape } from './ui/Rodape'
 import { SecaoCategoria } from './ui/SecaoCategoria'
 import { textos } from './ui/textos'
-import { Topo } from './ui/Topo'
+import { Lombada } from './ui/Lombada'
+import { useMediaQuery } from './ui/useMediaQuery'
 import { useScrollSpy } from './ui/useScrollSpy'
+
+/** Folga no topo ao rolar até uma seção quando não há barra fixa (lombada, 1024px+): scroll-mt-8. */
+const FOLGA_LOMBADA = 32
 
 export default function App() {
   const { categorias } = useCardapio(carregarCardapio)
-  const situacao = useSituacaoLoja(loja)
+  const situacao = situacaoExibida(useSituacaoLoja(loja), modoDemo)
   const carrinho = useCarrinho(categorias, 'torra:carrinho:v1')
   const cliente = useDadosCliente('torra:cliente:v1')
 
   const [itemAberto, setItemAberto] = useState<Item | null>(null)
-  const [pedidoAberto, setPedidoAberto] = useState(false)
+  const [pedido, setPedido] = useState<'carrinho' | 'checkout' | null>(null)
   const [aviso, setAviso] = useState('')
 
   const idsSecoes = useMemo(() => (categorias ?? []).map(idSecao), [categorias])
-  const { ativo, irPara } = useScrollSpy(idsSecoes, ALTURA_NAV)
+  const comLombada = useMediaQuery('(min-width: 64rem)')
+  const { ativo, irPara } = useScrollSpy(idsSecoes, comLombada ? FOLGA_LOMBADA : ALTURA_NAV)
 
   const categoriaDoItem = useMemo(
     () => categorias?.find((c) => itemAberto && c.itens.includes(itemAberto))?.nome ?? '',
@@ -51,36 +59,53 @@ export default function App() {
     },
     [categorias],
   )
-  const fecharPedido = useCallback(() => setPedidoAberto(false), [])
+  const fecharPedido = useCallback(() => setPedido(null), [])
 
   return (
     <>
-      <Topo loja={loja} situacao={situacao} urlSite={urlSite} />
+      {modoDemo && <FaixaDemo />}
+      <div className="lg:mx-auto lg:grid lg:max-w-[1440px] lg:grid-cols-[19rem_minmax(0,1fr)] lg:gap-x-12 lg:px-10 xl:grid-cols-[19rem_minmax(0,1fr)_21rem]">
+        <Lombada
+          loja={loja}
+          situacao={situacao}
+          urlSite={urlSite}
+          categorias={categorias}
+          ativo={ativo}
+          aoEscolher={irPara}
+        />
 
-      {categorias && (
-        <>
-          <NavCategorias categorias={categorias} ativo={ativo} aoEscolher={irPara} />
-          <main className={`mx-auto max-w-[720px] px-5 ${carrinho.quantidadeItens > 0 ? 'pb-24' : ''}`}>
-            {categorias.map((categoria, i) => (
-              <SecaoCategoria
-                key={categoria.id}
-                categoria={categoria}
-                numero={i + 1}
-                aoAbrir={abrirItem}
-                aoAdicionarDireto={adicionarDireto}
-              />
-            ))}
-          </main>
-        </>
-      )}
+        <div className="min-w-0">
+          {categorias && (
+            <>
+              <NavCategorias categorias={categorias} ativo={ativo} aoEscolher={irPara} />
+              <main
+                className={`mx-auto max-w-[720px] px-5 lg:mx-0 lg:max-w-none lg:px-0 ${carrinho.quantidadeItens > 0 ? 'pb-24 xl:pb-0' : ''}`}
+              >
+                {categorias.map((categoria, i) => (
+                  <SecaoCategoria
+                    key={categoria.id}
+                    categoria={categoria}
+                    numero={i + 1}
+                    aoAbrir={abrirItem}
+                    aoAdicionarDireto={adicionarDireto}
+                  />
+                ))}
+              </main>
+              {/* Junto com o cardápio: renderizado antes, o rodapé seria empurrado (layout shift). */}
+              <Rodape loja={loja} urlSite={urlSite} />
+            </>
+          )}
+        </div>
 
-      <Rodape loja={loja} urlSite={urlSite} />
+        <ComandaLateral carrinho={carrinho} aoContinuar={() => setPedido('checkout')} />
+      </div>
 
-      <BarraCarrinho quantidade={carrinho.quantidadeItens} subtotal={carrinho.subtotal} aoAbrir={() => setPedidoAberto(true)} />
+      <BarraCarrinho quantidade={carrinho.quantidadeItens} subtotal={carrinho.subtotal} aoAbrir={() => setPedido('carrinho')} />
 
       <FolhaItem item={itemAberto} categoria={categoriaDoItem} aoFechar={fecharItem} aoAdicionar={adicionar} />
       <PainelPedido
-        aberto={pedidoAberto}
+        aberto={pedido !== null}
+        etapaInicial={pedido ?? 'carrinho'}
         aoFechar={fecharPedido}
         carrinho={carrinho}
         cliente={cliente}

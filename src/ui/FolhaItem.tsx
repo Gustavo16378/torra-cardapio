@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { formatarBRL, precoUnitario } from '../core/precos'
 import type { Escolhas, Item } from '../core/tipos'
 import { gruposPendentes, LIMITE_OBS_ITEM } from '../core/validacao'
+import { fotoDoItem } from '../dados/fotos'
 import { FichaTecnica } from './FichaTecnica'
 import { Folha } from './Folha'
+import { Foto } from './Foto'
 import { GrupoOpcoes } from './GrupoOpcoes'
 import { SeletorQuantidade } from './SeletorQuantidade'
 import { textos } from './textos'
@@ -53,15 +55,17 @@ function ConteudoItem({
   const pendentes = gruposPendentes(item, escolhas)
   const pronto = pendentes.length === 0
   const total = precoUnitario(item, escolhas) * quantidade
+  const foto = fotoDoItem(item)
 
   return (
     <div className="flex min-h-full flex-col">
+      {foto && <Foto foto={foto} sizes="(min-width: 48rem) 560px, 100vw" className="mt-3 aspect-[16/10] w-full" prioridade />}
       <header className="px-5 pt-6 pb-6 md:px-8 md:pt-8">
         <p className="rotulo pr-12 text-gold">{categoria}</p>
         <h2 id="folha-item-titulo" className="mt-2 pr-10 font-display text-[clamp(38px,11vw,52px)] uppercase leading-[0.92]">
           {item.nome}
         </h2>
-        {item.descricao && <p className="mt-3 text-[15px] leading-relaxed text-cream/75">{item.descricao}</p>}
+        {item.descricao && <p className="mt-3 max-w-texto text-[15px] leading-normal text-cream/75">{item.descricao}</p>}
         {item.tags && item.tags.length > 0 && (
           <p className="rotulo mt-3 flex gap-3 text-[10px] text-gold">
             {item.tags.map((tag) => (

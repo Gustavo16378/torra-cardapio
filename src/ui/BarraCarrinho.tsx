@@ -33,7 +33,7 @@ export function BarraCarrinho({
   return (
     <div
       inert={!visivel}
-      className={`fixed inset-x-0 bottom-0 z-40 transition-[transform,visibility] duration-700 ease-cine ${
+      className={`fixed inset-x-0 bottom-0 z-40 transition-[transform,visibility] xl:hidden duration-700 ease-cine ${
         visivel ? 'visible translate-y-0' : 'invisible translate-y-[calc(100%+12px)]'
       }`}
     >

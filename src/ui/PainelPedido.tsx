@@ -16,6 +16,8 @@ type Etapa = 'carrinho' | 'checkout' | 'enviado' | 'obrigado'
 
 type Props = {
   aberto: boolean
+  /** Etapa em que a folha abre: a barra abre no carrinho, a comanda lateral direto no checkout. */
+  etapaInicial: 'carrinho' | 'checkout'
   aoFechar: () => void
   carrinho: EstadoCarrinho
   cliente: ReturnType<typeof useDadosCliente>
@@ -29,7 +31,7 @@ const botaoSecundario =
   'flex h-12 w-full items-center justify-center border border-cream/25 rotulo text-cream transition-[border-color,color] duration-200 hover:border-gold hover:text-gold'
 
 /** Carrinho, checkout e envio numa folha só, em etapas. */
-export function PainelPedido({ aberto, aoFechar, carrinho, cliente, loja, situacao }: Props) {
+export function PainelPedido({ aberto, etapaInicial, aoFechar, carrinho, cliente, loja, situacao }: Props) {
   const [etapa, setEtapa] = useState<Etapa>('carrinho')
   const [form, setForm] = useState<FormularioCheckout>(() => ({
     nome: cliente.salvos.nome,
@@ -40,10 +42,9 @@ export function PainelPedido({ aberto, aoFechar, carrinho, cliente, loja, situac
     obs: '',
   }))
 
-  // Toda abertura começa pelo carrinho.
   useEffect(() => {
-    if (aberto) setEtapa('carrinho')
-  }, [aberto])
+    if (aberto) setEtapa(etapaInicial)
+  }, [aberto, etapaInicial])
 
   // Ao trocar de etapa, leva o foco (e a rolagem) para o título novo.
   const primeiraEtapa = useRef(true)

@@ -31,16 +31,16 @@ export function SecaoCategoria({
   const origens = origensDaSecao(categoria)
 
   return (
-    <section id={id} aria-labelledby={`${id}-titulo`} className="scroll-mt-[52px] pt-14">
-      <header className="mb-4">
+    <section id={id} aria-labelledby={`${id}-titulo`} className="scroll-mt-[52px] pt-14 lg:scroll-mt-8">
+      <header className="mb-8">
         <div className="flex items-center gap-3">
           <span className="font-display text-lg leading-none text-gold">{String(numero).padStart(2, '0')}</span>
           <span aria-hidden className="h-px flex-1 bg-cream/15" />
         </div>
-        <h2 id={`${id}-titulo`} className="mt-3 font-display text-[clamp(44px,13vw,64px)] uppercase leading-[0.9] text-cream">
+        <h2 id={`${id}-titulo`} className="mt-4 font-display text-[clamp(44px,13vw,64px)] uppercase leading-[0.9] text-cream">
           {categoria.nome}
         </h2>
-        {categoria.descricao && <p className="mt-3 max-w-[46ch] text-[15px] leading-relaxed text-cream/70">{categoria.descricao}</p>}
+        {categoria.descricao && <p className="mt-4 max-w-texto text-[15px] leading-normal text-cream/70">{categoria.descricao}</p>}
       </header>
 
       {origens.length > 0 && <OrigensDaSemana origens={origens} />}

@@ -1,0 +1,206 @@
+<!doctype html>
+<!--
+  Ilustração do pacote de grãos (800×1000), usada até existir foto real do produto.
+  Variantes: ?origem=mantiqueira | ?origem=cerrado. Para regerar, ver scripts/gerar-pacotes.js.
+-->
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      @font-face {
+        font-family: 'Anton';
+        src: url('/fonts/anton-latin.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Archivo';
+        font-weight: 100 900;
+        src: url('/fonts/archivo-latin-wght.woff2') format('woff2');
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        width: 800px;
+        height: 1000px;
+        overflow: hidden;
+        font-family: 'Archivo', sans-serif;
+        background: radial-gradient(ellipse 70% 55% at 50% 38%, #2b1f15, #120d09 75%);
+      }
+      .chao {
+        position: absolute;
+        left: 50%;
+        bottom: 26px;
+        width: 640px;
+        height: 60px;
+        transform: translateX(-50%);
+        background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.75), transparent 70%);
+        filter: blur(6px);
+      }
+      .pacote {
+        position: absolute;
+        left: 50%;
+        top: 50px;
+        width: 440px;
+        height: 720px;
+        /* Ampliado para o pacote ocupar o quadro 4:5 (fica legível em miniatura). */
+        transform: translateX(-50%) scale(1.25);
+        transform-origin: top center;
+        border-radius: 6px 6px 18px 18px;
+        background:
+          linear-gradient(90deg, rgba(255, 255, 255, 0.05), transparent 18%, transparent 78%, rgba(0, 0, 0, 0.45)),
+          linear-gradient(180deg, #2a2017, #17110c 40%, #120d09);
+        box-shadow: inset 0 0 0 1px rgba(242, 236, 225, 0.06);
+      }
+      /* solda superior picotada */
+      .pacote::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -10px;
+        height: 12px;
+        background:
+          linear-gradient(-45deg, #2a2017 6px, transparent 0) 0 100% / 12px 12px repeat-x,
+          linear-gradient(45deg, #2a2017 6px, transparent 0) 0 100% / 12px 12px repeat-x;
+      }
+      .solda {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 54px;
+        border-bottom: 1px solid rgba(242, 236, 225, 0.08);
+        background: repeating-linear-gradient(90deg, rgba(242, 236, 225, 0.03) 0 2px, transparent 2px 7px);
+      }
+      .lacre {
+        position: absolute;
+        left: 34px;
+        right: 34px;
+        top: 70px;
+        height: 10px;
+        border-radius: 2px;
+        background: linear-gradient(180deg, #e0b25e, #9c7128);
+      }
+      .valvula {
+        position: absolute;
+        right: 58px;
+        top: 112px;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 2px solid rgba(242, 236, 225, 0.18);
+        box-shadow: inset 0 0 0 7px rgba(242, 236, 225, 0.05);
+      }
+      .rotulo {
+        position: absolute;
+        left: 56px;
+        right: 56px;
+        top: 176px;
+        bottom: 70px;
+        padding: 34px 30px 26px;
+        display: flex;
+        flex-direction: column;
+        color: #120d09;
+        background: var(--etiqueta);
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+      }
+      .marca {
+        font-family: 'Anton', sans-serif;
+        font-size: 78px;
+        line-height: 0.85;
+        text-transform: uppercase;
+      }
+      .marca span {
+        color: var(--ponto);
+      }
+      .sobre {
+        margin-top: 14px;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+      .filete {
+        margin: 26px 0 22px;
+        height: 2px;
+        background: #120d09;
+      }
+      .origem {
+        font-family: 'Anton', sans-serif;
+        font-size: 50px;
+        line-height: 0.92;
+        text-transform: uppercase;
+      }
+      .regiao {
+        margin-top: 10px;
+        font-size: 17px;
+        font-weight: 600;
+      }
+      .dados {
+        margin-top: auto;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 6px 18px;
+        font-size: 15px;
+      }
+      .dados dt {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        padding-top: 2px;
+      }
+      .peso {
+        position: absolute;
+        right: 30px;
+        top: 34px;
+        font-family: 'Anton', sans-serif;
+        font-size: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chao"></div>
+    <div class="pacote">
+      <div class="solda"></div>
+      <div class="lacre"></div>
+      <div class="valvula"></div>
+      <div class="rotulo">
+        <p class="peso">250 G</p>
+        <p class="marca">TORRA<span>.</span></p>
+        <p class="sobre">Café especial · em grãos</p>
+        <div class="filete"></div>
+        <p class="origem" id="origem"></p>
+        <p class="regiao" id="regiao"></p>
+        <dl class="dados" id="dados"></dl>
+      </div>
+    </div>
+    <script>
+      const variantes = {
+        mantiqueira: {
+          etiqueta: '#f2ece1',
+          ponto: '#c9973f',
+          origem: 'Mantiqueira<br />de Minas',
+          regiao: 'Carmo de Minas · MG',
+          dados: [['Torra', 'média'], ['Notas', 'caramelo, laranja, mel'], ['Processo', 'natural'], ['Altitude', '1.200 m']],
+        },
+        cerrado: {
+          etiqueta: '#c9973f',
+          ponto: '#f2ece1',
+          origem: 'Cerrado<br />Mineiro',
+          regiao: 'Patrocínio · MG',
+          dados: [['Torra', 'média'], ['Notas', 'chocolate ao leite, castanhas'], ['Processo', 'natural'], ['Altitude', '1.000 m']],
+        },
+      }
+      const v = variantes[new URLSearchParams(location.search).get('origem')] ?? variantes.mantiqueira
+      document.documentElement.style.setProperty('--etiqueta', v.etiqueta)
+      document.documentElement.style.setProperty('--ponto', v.ponto)
+      document.getElementById('origem').innerHTML = v.origem
+      document.getElementById('regiao').textContent = v.regiao
+      document.getElementById('dados').innerHTML = v.dados.map(([r, x]) => `<dt>${r}</dt><dd>${x}</dd>`).join('')
+    </script>
+  </body>
+</html>

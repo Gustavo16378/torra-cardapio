@@ -7,11 +7,15 @@ type Props = {
   /** Nome do item, para os rótulos dos botões. */
   rotulo: string
   compacto?: boolean
+  /** Sobre fundo creme (comanda lateral). */
+  claro?: boolean
 }
 
-export function SeletorQuantidade({ valor, aoMudar, rotulo, compacto = false }: Props) {
+export function SeletorQuantidade({ valor, aoMudar, rotulo, compacto = false, claro = false }: Props) {
   const tamanho = compacto ? 'size-9' : 'size-11'
-  const botao = `grid ${tamanho} place-items-center rounded-full border border-cream/30 transition-[border-color,color,opacity] duration-200 hover:border-gold hover:text-gold disabled:pointer-events-none disabled:opacity-30`
+  const botao = `grid ${tamanho} place-items-center rounded-full border transition-[border-color,color,opacity] duration-200 disabled:pointer-events-none disabled:opacity-30 ${
+    claro ? 'border-ink/30 hover:border-ink' : 'border-cream/30 hover:border-gold hover:text-gold'
+  }`
 
   return (
     <div className="flex items-center gap-1" role="group" aria-label={`Quantidade de ${rotulo}`}>

@@ -94,12 +94,12 @@ export const cardapio: Categoria[] = [
     nome: 'Espressos',
     descricao: 'Blend da casa, torra média, extraído a 93 °C.',
     itens: [
-      { id: 'espresso', nome: 'Espresso', descricao: 'Blend da casa, torra média.', preco: 9, disponivel: true },
+      { id: 'espresso', nome: 'Espresso', descricao: 'Blend da casa, torra média.', preco: 9, disponivel: true, imagem: '/img/espresso' },
       { id: 'espresso-duplo', nome: 'Espresso duplo', descricao: 'Dose dupla do blend da casa.', preco: 13, disponivel: true },
       { id: 'macchiato', nome: 'Macchiato', descricao: 'Espresso marcado com uma colher de espuma.', preco: 11, disponivel: true },
       { id: 'cortado', nome: 'Cortado', descricao: 'Espresso e leite vaporizado em partes iguais.', preco: 13, disponivel: true },
-      { id: 'cappuccino', nome: 'Cappuccino', descricao: 'Espresso, leite vaporizado e espuma fina.', preco: 16, disponivel: true, grupos: comLeite },
-      { id: 'latte', nome: 'Latte', descricao: 'Mais leite, textura sedosa, espresso por baixo.', preco: 17, disponivel: true, grupos: comLeite },
+      { id: 'cappuccino', nome: 'Cappuccino', descricao: 'Espresso, leite vaporizado e espuma fina.', preco: 16, disponivel: true, grupos: comLeite, imagem: '/img/cappuccino' },
+      { id: 'latte', nome: 'Latte', descricao: 'Mais leite, textura sedosa, espresso por baixo.', preco: 17, disponivel: true, grupos: comLeite, imagem: '/img/latte' },
       { id: 'mocha', nome: 'Mocha', descricao: 'Espresso, chocolate 70% e leite vaporizado.', preco: 19, disponivel: true, grupos: comLeite },
     ],
   },
@@ -117,7 +117,7 @@ export const cardapio: Categoria[] = [
     id: 'gelados',
     nome: 'Gelados',
     itens: [
-      { id: 'cold-brew', nome: 'Cold brew', descricao: '16 horas de extração a frio.', preco: 16, disponivel: true },
+      { id: 'cold-brew', nome: 'Cold brew', descricao: '16 horas de extração a frio.', preco: 16, disponivel: true, imagem: '/img/cold-brew' },
       { id: 'espresso-tonica', nome: 'Espresso tônica', descricao: 'Espresso sobre tônica e gelo, com casca de laranja.', preco: 18, disponivel: true },
       { id: 'iced-latte', nome: 'Iced latte', descricao: 'Espresso, leite gelado e gelo.', preco: 18, disponivel: true, grupos: [leite] },
     ],
@@ -138,8 +138,8 @@ export const cardapio: Categoria[] = [
     nome: 'Grãos para levar',
     descricao: 'Torrados nesta semana, em pacotes de 250 g. Moemos na hora para o seu método.',
     itens: [
-      { id: 'graos-mantiqueira', nome: 'TORRA. Mantiqueira 250 g', preco: 62, disponivel: true, grupos: [moagem], ficha: fichaMantiqueira },
-      { id: 'graos-cerrado', nome: 'TORRA. Cerrado 250 g', preco: 58, disponivel: true, grupos: [moagem], ficha: fichaCerrado },
+      { id: 'graos-mantiqueira', nome: 'TORRA. Mantiqueira 250 g', preco: 62, disponivel: true, grupos: [moagem], ficha: fichaMantiqueira, imagem: '/img/pacote-mantiqueira' },
+      { id: 'graos-cerrado', nome: 'TORRA. Cerrado 250 g', preco: 58, disponivel: true, grupos: [moagem], ficha: fichaCerrado, imagem: '/img/pacote-cerrado' },
     ],
   },
 ]

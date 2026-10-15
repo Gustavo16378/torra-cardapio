@@ -18,7 +18,7 @@ export function quandoAbre(proxima?: ProximaAbertura): string {
 
 /** Linha de status do topo: "Aberto agora · fecha às 19h" / "Fechado · abre terça às 7h". */
 export function textoStatus(situacao: SituacaoLoja): string {
-  if (situacao.aceitaPedidos && situacao.fechaAs) return `Aberto agora · fecha às ${horaCurta(situacao.fechaAs)}`
+  if (situacao.aceitaPedidos) return situacao.fechaAs ? `Aberto agora · fecha às ${horaCurta(situacao.fechaAs)}` : 'Aberto agora'
   const abre = quandoAbre(situacao.proximaAbertura)
   const inicio = situacao.aberta ? 'Pedidos encerrados por hoje' : 'Fechado'
   return abre ? `${inicio} · ${abre}` : inicio
@@ -60,6 +60,7 @@ export function horariosAgrupados(loja: Loja): { dias: string; horario: string }
 
 export const textos = {
   chamada: 'Cardápio · peça pelo WhatsApp',
+  faixaDemo: 'Demonstração · o pedido chega no WhatsApp do Gustavo',
   voltarSite: 'torra-cafe.pages.dev',
   navCategorias: 'Categorias do cardápio',
   esgotado: 'Esgotado hoje',
@@ -80,6 +81,8 @@ export const textos = {
   barra: (itens: number, total: string) => `${plural(itens, 'item', 'itens')} · ${total}`,
   verPedido: 'Ver pedido',
   comanda: 'Comanda',
+  comandaVazia: 'Nada anotado ainda.',
+  comandaVaziaDica: 'Toque no + de um item e ele aparece aqui.',
   seuPedido: 'Seu pedido',
   pedidoVazio: 'Seu pedido está vazio.',
   voltarCardapio: 'Voltar ao cardápio',

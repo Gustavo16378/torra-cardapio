@@ -32,7 +32,7 @@ export function NavCategorias({
   return (
     <nav
       aria-label={textos.navCategorias}
-      className="sticky top-0 z-30 border-y border-cream/10 bg-ink/90 backdrop-blur-md"
+      className="sticky top-0 z-30 border-y border-cream/10 bg-ink/90 backdrop-blur-md lg:hidden"
       style={{ height: ALTURA_NAV }}
     >
       <ul ref={listaRef} className="sem-barra-rolagem mx-auto flex h-full max-w-[720px] gap-6 overflow-x-auto px-5">

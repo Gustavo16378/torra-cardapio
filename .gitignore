@@ -32,3 +32,6 @@ Thumbs.db
 # Cloudflare / Playwright
 .wrangler/
 .playwright-cli/
+
+# imagens intermediárias (PNG antes da otimização)
+.imagens/

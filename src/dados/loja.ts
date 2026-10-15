@@ -18,3 +18,10 @@ export const loja: Loja = {
 }
 
 export const urlSite = 'https://torra-cafe.pages.dev'
+
+/**
+ * Modo demonstração: a loja aparece sempre aberta, o envio nunca é bloqueado por horário
+ * e uma faixa avisa que o pedido vai para o WhatsApp de teste. O motor (core/horario.ts)
+ * continua calculando o horário real; só a interface decide ignorá-lo.
+ */
+export const modoDemo = true

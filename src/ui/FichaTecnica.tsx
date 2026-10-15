@@ -29,7 +29,7 @@ export function FichaTecnica({ ficha, className = '' }: { ficha: Ficha; classNam
 /** Quadro "Origens da semana", mostrado uma vez na seção dos coados. */
 export function OrigensDaSemana({ origens }: { origens: Opcao[] }) {
   return (
-    <aside className="mb-2 border-l-2 border-gold/60 pl-4" aria-labelledby="origens-da-semana">
+    <aside className="mb-6 border-l-2 border-gold/60 pl-4" aria-labelledby="origens-da-semana">
       <h3 id="origens-da-semana" className="rotulo text-[10px] text-gold">
         {textos.origensDaSemana}
       </h3>

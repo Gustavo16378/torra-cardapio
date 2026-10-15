@@ -8,7 +8,7 @@ export function Rodape({ loja, urlSite }: { loja: Loja; urlSite: string }) {
   const minimo = formatarBRL(paraCentavos(loja.entrega.pedidoMinimo))
 
   return (
-    <footer className="mx-auto mt-20 max-w-[720px] border-t border-cream/15 px-5 pt-12 pb-16">
+    <footer className="mx-auto mt-20 max-w-[720px] border-t border-cream/15 px-5 pt-12 pb-16 lg:mx-0 lg:max-w-none lg:px-0">
       <Marca className="text-6xl leading-none" />
 
       <div className="mt-10 grid gap-8 md:grid-cols-2">

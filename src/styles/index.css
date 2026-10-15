@@ -26,6 +26,9 @@
   --font-text: 'Archivo', system-ui, sans-serif;
 
   --ease-cine: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Medida de leitura das descrições */
+  --container-texto: 55ch;
 }
 
 @layer base {
@@ -101,6 +104,23 @@
     background:
       linear-gradient(-45deg, var(--color-cream) 4px, transparent 0) 0 100% / 8px 8px repeat-x,
       linear-gradient(45deg, var(--color-cream) 4px, transparent 0) 0 100% / 8px 8px repeat-x;
+  }
+}
+
+/* Borda de baixo picotada (comanda lateral). */
+@utility serrilha-baixo {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -7px;
+    height: 8px;
+    background:
+      linear-gradient(-135deg, var(--color-cream) 4px, transparent 0) 0 0 / 8px 8px repeat-x,
+      linear-gradient(135deg, var(--color-cream) 4px, transparent 0) 0 0 / 8px 8px repeat-x;
   }
 }
 

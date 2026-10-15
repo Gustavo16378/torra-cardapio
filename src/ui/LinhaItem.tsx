@@ -2,7 +2,9 @@ import { Check, Plus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { formatarPrecoCurto, paraCentavos } from '../core/precos'
 import type { Item } from '../core/tipos'
+import { fotoDoItem } from '../dados/fotos'
 import { FichaTecnica } from './FichaTecnica'
+import { Foto } from './Foto'
 import { textos } from './textos'
 
 type Props = {
@@ -13,11 +15,17 @@ type Props = {
   aoAdicionarDireto: (item: Item) => void
 }
 
+/** Junta a última palavra à anterior para ela não ficar sozinha na linha ("250 g"). */
+function semViuva(texto: string): string {
+  return texto.replace(/ (\S+)$/, '\u00a0$1')
+}
+
 /** Uma linha da carta: nome ··· preço, descrição, tags e o "+". */
 export function LinhaItem({ item, origens, aoAbrir, aoAdicionarDireto }: Props) {
   // Esgotado fica apagado por cor (não por opacity), para o texto continuar com contraste AA.
   const apagado = !item.disponivel
   const temOpcoes = (item.grupos?.length ?? 0) > 0
+  const foto = fotoDoItem(item)
   const [confirmacoes, setConfirmacoes] = useState(0)
   const confirmando = confirmacoes > 0
 
@@ -33,7 +41,7 @@ export function LinhaItem({ item, origens, aoAbrir, aoAdicionarDireto }: Props) 
         <span
           className={`text-[15px] font-semibold uppercase leading-snug tracking-[0.04em] transition-colors duration-200 group-hover:text-gold ${apagado ? 'text-cream/55' : ''}`}
         >
-          {item.nome}
+          {semViuva(item.nome)}
         </span>
         <span aria-hidden className="pontilhado flex-1" />
         <span className={`numeros-tabulares text-[15px] font-medium leading-snug ${apagado ? 'text-cream/55 line-through' : ''}`}>
@@ -41,9 +49,9 @@ export function LinhaItem({ item, origens, aoAbrir, aoAdicionarDireto }: Props) 
           {formatarPrecoCurto(paraCentavos(item.preco))}
         </span>
       </span>
-      {item.descricao && <span className={`mt-1.5 block text-sm leading-relaxed ${apagado ? 'text-cream/50' : 'text-cream/65'}`}>{item.descricao}</span>}
+      {item.descricao && <span className={`mt-2 block max-w-texto text-sm leading-normal ${apagado ? 'text-cream/50' : 'text-cream/65'}`}>{item.descricao}</span>}
       {(item.tags?.length || origens > 0) && (
-        <span className="rotulo mt-2 flex flex-wrap gap-x-3 text-[10px] text-gold">
+        <span className="rotulo mt-3 flex flex-wrap gap-x-3 text-[10px] text-gold">
           {item.tags?.map((tag) => <span key={tag}>{tag}</span>)}
           {origens > 0 && <span>{textos.origensNaLinha(origens)}</span>}
         </span>
@@ -53,7 +61,7 @@ export function LinhaItem({ item, origens, aoAbrir, aoAdicionarDireto }: Props) 
 
   return (
     <li className="border-b border-cream/10">
-      <div className="flex items-start gap-4 py-5">
+      <div className="flex items-start gap-4 py-7">
         {item.disponivel ? (
           <button type="button" onClick={() => aoAbrir(item)} className="group min-w-0 flex-1 text-left">
             {conteudo}
@@ -88,7 +96,13 @@ export function LinhaItem({ item, origens, aoAbrir, aoAdicionarDireto }: Props) 
         )}
       </div>
 
-      {item.ficha && <FichaTecnica ficha={item.ficha} className="mb-6 -mt-1" />}
+      {/* Produto com ficha (grãos para levar): a foto do pacote entra na carta, ao lado da ficha. */}
+      {item.ficha && (
+        <div className="mb-7 flex flex-col gap-5 sm:flex-row sm:items-start">
+          {foto && <Foto foto={foto} sizes="(min-width: 64rem) 7rem, (min-width: 40rem) 6rem, 7rem" className="aspect-[4/5] w-28 shrink-0 sm:w-24 lg:w-28" />}
+          <FichaTecnica ficha={item.ficha} className="min-w-0 flex-1" />
+        </div>
+      )}
     </li>
   )
 }

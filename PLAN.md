@@ -157,7 +157,30 @@ Ela sobe com `transform` e `--ease-cine`, e o total dá um "tique" a cada item a
 - **Lighthouse mobile:** Performance 99 · Acessibilidade 100 · Boas práticas 100 · SEO 100 (LCP 1,8 s, CLS 0).
 - Nenhum `transition-all` nem `transition` genérico.
 
+## 6b. Ajustes de 15/10/2026 (demo, espaçamento, layout e imagens)
+
+- **Modo demonstração:** `modoDemo` em `dados/loja.ts`.
+  - `ui/demo.ts` troca a situação real por "aberta" e mostra a faixa no topo.
+  - O `core/horario.ts` não mudou, e um teste confirma que ele continua vendo a loja fechada na segunda.
+- **Espaçamento:**
+  - Usa só a escala do Tailwind e o token `--container-texto: 55ch` (`max-w-texto`).
+  - As descrições têm `leading-normal` (1.5).
+  - Os itens ganharam `py-7`, e o cabeçalho de categoria, `mb-8`.
+- **Layout:**
+  - **Até 1023px:** coluna única.
+  - **De 1024px:** a lombada fica fixa (`Lombada.tsx` + `IndiceCategorias.tsx`) e a carta vai para a coluna central.
+  - **De 1280px:** a comanda de papel fica fixa à direita (`ComandaLateral.tsx`), e a barra do rodapé some.
+- **Imagens:**
+  - Ficam em `public/img`, em AVIF + WebP, 480/800/1200 (pacotes 480/800), com `<picture>`, width/height e lazy fora da dobra.
+  - O registro com alt e foco do recorte está em `dados/fotos.ts`.
+  - As fotos vêm do site do TORRA. Os pacotes são uma ilustração (`scripts/pacote.html`) até existir foto real.
+- **Lighthouse mobile:** 98–99 · 100 · 100 · 100 (CLS 0, LCP 2,1 s).
+
 ## 7. Pendências
+
+- Foto real dos pacotes de 250 g (hoje é uma ilustração).
+- Foto para V60, Chemex, Prensa, Iced latte, Mocha etc. (o site não tem; a folha abre sem foto).
+- Desligar `modoDemo` quando o cardápio for para a cafeteria.
 
 - Trocar o placeholder do canonical/og:url (`https://cardapio-torra.pages.dev/`) depois do deploy.
 - Trocar o WhatsApp de teste pelo da cafeteria.
