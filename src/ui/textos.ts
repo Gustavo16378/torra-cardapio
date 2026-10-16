@@ -88,6 +88,11 @@ export const textos = {
   voltarCardapio: 'Voltar ao cardápio',
   adicionarMais: 'Adicionar mais itens',
   remover: 'Remover',
+  limparPedido: 'Limpar pedido',
+  pedidoLimpo: 'Pedido limpo.',
+  desfazer: 'Desfazer',
+  pedidoAnterior: 'Guardamos o pedido da sua última visita.',
+  comecarDoZero: 'Começar do zero',
   descartadas: (n: number) =>
     n === 1
       ? 'Um item do seu pedido anterior saiu do cardápio de hoje e foi retirado.'

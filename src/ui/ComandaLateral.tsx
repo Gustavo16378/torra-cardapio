@@ -1,26 +1,37 @@
 import { formatarBRL, totalLinha } from '../core/precos'
 import type { Carrinho } from '../hooks/useCarrinho'
+import { AvisoDesfazer, AvisoVisitaAnterior, BotaoLimpar, BotaoRemover, useLimparComDesfazer } from './AvisosPedido'
 import { SeletorQuantidade } from './SeletorQuantidade'
 import { textos } from './textos'
 
 /** Comanda de papel fixa na coluna direita (a partir de 1280px): substitui a barra do rodapé. */
 export function ComandaLateral({ carrinho, aoContinuar }: { carrinho: Carrinho; aoContinuar: () => void }) {
   const { linhas } = carrinho
+  const { podeDesfazer, limpar, desfazer } = useLimparComDesfazer(carrinho)
 
   return (
     <aside aria-labelledby="comanda-titulo" className="hidden xl:block">
       <div className="sticky top-0 flex h-dvh flex-col py-10">
         <div className="serrilha serrilha-baixo flex min-h-0 flex-col bg-cream text-ink shadow-[0_24px_60px_rgb(0_0_0/0.45)]">
           <div className="min-h-0 flex-1 overflow-y-auto px-6 pt-7 pb-2">
-            <p className="rotulo text-ink/70">{textos.comanda}</p>
-            <h2 id="comanda-titulo" className="mt-2 font-display text-4xl uppercase leading-none">
+            <div className="-my-3 flex min-h-11 items-center justify-between gap-3">
+              <p className="rotulo text-ink/70">{textos.comanda}</p>
+              {linhas.length > 0 && <BotaoLimpar claro aoLimpar={limpar} />}
+            </div>
+            <h2 id="comanda-titulo" className="mt-4 font-display text-4xl uppercase leading-none">
               {textos.seuPedido}
             </h2>
 
+            {carrinho.daVisitaAnterior && <AvisoVisitaAnterior claro aoComecarDoZero={limpar} />}
+
             {linhas.length === 0 ? (
               <div className="py-8">
-                <p className="text-[15px] font-semibold">{textos.comandaVazia}</p>
-                <p className="mt-2 text-sm leading-normal text-ink/70">{textos.comandaVaziaDica}</p>
+                <p className="text-[15px] font-semibold">{podeDesfazer ? textos.pedidoLimpo : textos.comandaVazia}</p>
+                {podeDesfazer ? (
+                  <AvisoDesfazer claro aoDesfazer={desfazer} />
+                ) : (
+                  <p className="mt-2 text-sm leading-normal text-ink/70">{textos.comandaVaziaDica}</p>
+                )}
               </div>
             ) : (
               <ul className="mt-5 border-t border-ink/15">
@@ -45,15 +56,9 @@ export function ComandaLateral({ carrinho, aoContinuar }: { carrinho: Carrinho; 
                         valor={linha.quantidade}
                         rotulo={linha.nome}
                         aoMudar={(q) => carrinho.alterarQuantidade(linha.chave, q)}
+                        aoRemover={() => carrinho.remover(linha.chave)}
                       />
-                      <button
-                        type="button"
-                        onClick={() => carrinho.remover(linha.chave)}
-                        aria-label={`${textos.remover} ${linha.nome}`}
-                        className="rotulo px-1 py-2 text-[10px] text-ink/70 transition-colors duration-200 hover:text-ink"
-                      >
-                        {textos.remover}
-                      </button>
+                      <BotaoRemover claro nome={linha.nome} aoRemover={() => carrinho.remover(linha.chave)} />
                     </div>
                   </li>
                 ))}

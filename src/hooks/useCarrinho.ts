@@ -6,9 +6,10 @@ import {
   reidratarCarrinho,
   serializarCarrinho,
   totalItens,
+  type AcaoCarrinho,
 } from '../core/carrinho'
 import { subtotal } from '../core/precos'
-import type { Categoria, Escolhas, Item } from '../core/tipos'
+import type { Categoria, Escolhas, Item, ItemCarrinho } from '../core/tipos'
 import { gravarJSON, lerJSON } from './armazenamento'
 
 /**
@@ -19,12 +20,15 @@ export function useCarrinho(categorias: Categoria[] | null, chaveArmazenamento: 
   const [estado, despachar] = useReducer(reducerCarrinho, carrinhoVazio)
   const [reidratado, setReidratado] = useState(false)
   const [descartadas, setDescartadas] = useState(0)
+  /** O carrinho atual veio salvo de uma visita anterior (até a pessoa mexer nele). */
+  const [daVisitaAnterior, setDaVisitaAnterior] = useState(false)
 
   useEffect(() => {
     if (!categorias || reidratado) return
     const resultado = reidratarCarrinho(lerJSON(chaveArmazenamento), categorias)
     despachar({ tipo: 'substituir', linhas: resultado.linhas })
     setDescartadas(resultado.descartadas)
+    setDaVisitaAnterior(resultado.linhas.length > 0)
     setReidratado(true)
   }, [categorias, reidratado, chaveArmazenamento])
 
@@ -32,16 +36,28 @@ export function useCarrinho(categorias: Categoria[] | null, chaveArmazenamento: 
     if (reidratado) gravarJSON(chaveArmazenamento, serializarCarrinho(estado.linhas))
   }, [estado.linhas, reidratado, chaveArmazenamento])
 
-  const adicionar = useCallback((item: Item, escolhas: Escolhas, quantidade = 1, obs = '') => {
-    despachar({ tipo: 'adicionar', linha: criarLinha(item, escolhas, quantidade, obs) })
+  // Qualquer ação da pessoa torna o pedido "dela", e o aviso de visita anterior some.
+  const despacharDaPessoa = useCallback((acao: AcaoCarrinho) => {
+    setDaVisitaAnterior(false)
+    despachar(acao)
   }, [])
 
-  const alterarQuantidade = useCallback((chave: string, quantidade: number) => {
-    despachar({ tipo: 'alterarQuantidade', chave, quantidade })
-  }, [])
+  const adicionar = useCallback(
+    (item: Item, escolhas: Escolhas, quantidade = 1, obs = '') => {
+      despacharDaPessoa({ tipo: 'adicionar', linha: criarLinha(item, escolhas, quantidade, obs) })
+    },
+    [despacharDaPessoa],
+  )
 
-  const remover = useCallback((chave: string) => despachar({ tipo: 'remover', chave }), [])
-  const limpar = useCallback(() => despachar({ tipo: 'limpar' }), [])
+  const alterarQuantidade = useCallback(
+    (chave: string, quantidade: number) => despacharDaPessoa({ tipo: 'alterarQuantidade', chave, quantidade }),
+    [despacharDaPessoa],
+  )
+
+  const remover = useCallback((chave: string) => despacharDaPessoa({ tipo: 'remover', chave }), [despacharDaPessoa])
+  const limpar = useCallback(() => despacharDaPessoa({ tipo: 'limpar' }), [despacharDaPessoa])
+  /** Volta um carrinho inteiro (usado pelo "Desfazer" depois de limpar). */
+  const restaurar = useCallback((linhas: ItemCarrinho[]) => despacharDaPessoa({ tipo: 'substituir', linhas }), [despacharDaPessoa])
   const esquecerDescartadas = useCallback(() => setDescartadas(0), [])
 
   return useMemo(
@@ -50,13 +66,15 @@ export function useCarrinho(categorias: Categoria[] | null, chaveArmazenamento: 
       quantidadeItens: totalItens(estado.linhas),
       subtotal: subtotal(estado.linhas),
       descartadas,
+      daVisitaAnterior,
       adicionar,
       alterarQuantidade,
       remover,
       limpar,
+      restaurar,
       esquecerDescartadas,
     }),
-    [estado.linhas, descartadas, adicionar, alterarQuantidade, remover, limpar, esquecerDescartadas],
+    [estado.linhas, descartadas, daVisitaAnterior, adicionar, alterarQuantidade, remover, limpar, restaurar, esquecerDescartadas],
   )
 }
 

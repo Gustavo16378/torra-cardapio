@@ -1,11 +1,13 @@
 import { Plus } from 'lucide-react'
 import { formatarBRL, totalLinha } from '../core/precos'
 import type { Carrinho as EstadoCarrinho } from '../hooks/useCarrinho'
+import { AvisoDesfazer, AvisoVisitaAnterior, BotaoLimpar, BotaoRemover, useLimparComDesfazer } from './AvisosPedido'
 import { SeletorQuantidade } from './SeletorQuantidade'
 import { textos } from './textos'
 
 export function Carrinho({ carrinho, aoAdicionarMais }: { carrinho: EstadoCarrinho; aoAdicionarMais: () => void }) {
   const { linhas } = carrinho
+  const { podeDesfazer, limpar, desfazer } = useLimparComDesfazer(carrinho)
 
   return (
     <div className="px-5 pt-6 pb-6 md:px-8 md:pt-8">
@@ -18,6 +20,8 @@ export function Carrinho({ carrinho, aoAdicionarMais }: { carrinho: EstadoCarrin
         {textos.seuPedido}
       </h2>
 
+      {carrinho.daVisitaAnterior && <AvisoVisitaAnterior aoComecarDoZero={limpar} />}
+
       {carrinho.descartadas > 0 && (
         <p role="status" className="mt-4 border-l-2 border-gold/60 pl-3 text-sm text-cream/80">
           {textos.descartadas(carrinho.descartadas)}
@@ -27,6 +31,7 @@ export function Carrinho({ carrinho, aoAdicionarMais }: { carrinho: EstadoCarrin
       {linhas.length === 0 ? (
         <div className="py-10">
           <p className="text-cream/75">{textos.pedidoVazio}</p>
+          {podeDesfazer && <AvisoDesfazer aoDesfazer={desfazer} />}
           <button type="button" onClick={aoAdicionarMais} className="rotulo mt-4 py-2 text-gold underline-offset-4 hover:underline">
             {textos.voltarCardapio}
           </button>
@@ -52,15 +57,9 @@ export function Carrinho({ carrinho, aoAdicionarMais }: { carrinho: EstadoCarrin
                     valor={linha.quantidade}
                     rotulo={linha.nome}
                     aoMudar={(q) => carrinho.alterarQuantidade(linha.chave, q)}
+                    aoRemover={() => carrinho.remover(linha.chave)}
                   />
-                  <button
-                    type="button"
-                    onClick={() => carrinho.remover(linha.chave)}
-                    aria-label={`${textos.remover} ${linha.nome}`}
-                    className="rotulo px-1 py-2 text-[10px] text-cream/70 transition-colors duration-200 hover:text-gold"
-                  >
-                    {textos.remover}
-                  </button>
+                  <BotaoRemover nome={linha.nome} aoRemover={() => carrinho.remover(linha.chave)} />
                 </div>
               </li>
             ))}
@@ -72,14 +71,17 @@ export function Carrinho({ carrinho, aoAdicionarMais }: { carrinho: EstadoCarrin
             <span className="numeros-tabulares font-semibold">{formatarBRL(carrinho.subtotal)}</span>
           </div>
 
-          <button
-            type="button"
-            onClick={aoAdicionarMais}
-            className="rotulo mt-6 inline-flex items-center gap-1.5 py-2 text-gold transition-colors duration-200 hover:text-cream"
-          >
-            <Plus aria-hidden size={14} strokeWidth={2.5} />
-            {textos.adicionarMais}
-          </button>
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-x-4">
+            <button
+              type="button"
+              onClick={aoAdicionarMais}
+              className="rotulo inline-flex min-h-11 items-center gap-1.5 text-gold transition-colors duration-200 hover:text-cream"
+            >
+              <Plus aria-hidden size={14} strokeWidth={2.5} />
+              {textos.adicionarMais}
+            </button>
+            <BotaoLimpar aoLimpar={limpar} />
+          </div>
         </>
       )}
     </div>
